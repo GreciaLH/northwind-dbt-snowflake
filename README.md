@@ -201,4 +201,4 @@ dbt docs generate && dbt docs serve
 ## 👤 Autora
 
 **Grecia Landazuri Herrera**
-[LinkedIn](https://www.linkedin.com/in/grecialh/) · [GitHub](https://github.com/GreciaLH)
+[LinkedIn](https://www.linkedin.com/in/grecia-landazuri-herrera-data/)
