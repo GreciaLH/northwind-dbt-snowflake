@@ -1,0 +1,115 @@
+version: 2
+
+models:
+  # ---------- DIMENSIONES ----------
+  - name: dim_customer
+    description: "Dimensión de clientes. Grano: un cliente."
+    columns:
+      - name: customer_key
+        description: "Clave subrogada (PK)."
+        data_tests: [unique, not_null]
+      - name: customer_id
+        description: "Clave natural del origen."
+        data_tests: [not_null]
+
+  - name: dim_product
+    description: "Dimensión de productos, desnormalizada con categoría y proveedor."
+    columns:
+      - name: product_key
+        data_tests: [unique, not_null]
+      - name: product_id
+        data_tests: [not_null]
+
+  - name: dim_employee
+    description: "Dimensión de empleados (comerciales)."
+    columns:
+      - name: employee_key
+        data_tests: [unique, not_null]
+
+  - name: dim_shipper
+    description: "Dimensión de transportistas."
+    columns:
+      - name: shipper_key
+        data_tests: [unique, not_null]
+
+  - name: dim_date
+    description: "Dimensión de calendario generada."
+    columns:
+      - name: date_key
+        data_tests: [unique, not_null]
+
+  # ---------- HECHOS ----------
+  - name: fact_orders
+    description: "Hecho a grano de pedido (uno por pedido)."
+    columns:
+      - name: order_key
+        data_tests: [unique, not_null]
+      - name: customer_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: employee_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_employee')
+                field: employee_key
+      - name: shipper_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_shipper')
+                field: shipper_key
+      - name: order_date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: order_total
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: fact_order_details
+    description: "Hecho a grano de línea de pedido (uno por línea)."
+    columns:
+      - name: order_detail_key
+        data_tests: [unique, not_null]
+      - name: product_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: customer_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: order_date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: quantity
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+      - name: discount
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: net_amount
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0

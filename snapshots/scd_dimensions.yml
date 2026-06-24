@@ -1,0 +1,38 @@
+snapshots:
+
+  - name: scd_customers
+    relation: ref('stg_customers')
+    config:
+      unique_key: customer_id
+      strategy: check
+      check_cols:
+        - company_name
+        - contact_name
+        - contact_title
+        - city
+        - region
+        - country
+
+  - name: scd_employees
+    relation: ref('stg_employees')
+    config:
+      unique_key: employee_id
+      strategy: check
+      check_cols:
+        - full_name
+        - title
+        - city
+        - country
+        - manager_id
+
+  - name: scd_products
+    relation: ref('stg_products')
+    config:
+      unique_key: product_id
+      strategy: check
+      check_cols:
+        - product_name
+        - unit_price
+        - is_discontinued
+        - supplier_id
+        - category_id
